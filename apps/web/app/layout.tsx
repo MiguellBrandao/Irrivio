@@ -6,7 +6,10 @@ import { Providers } from "@/app/providers"
 import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import {
+  ACTIVE_COMPANY_NAME_COOKIE_NAME,
   ACTIVE_COMPANY_FAVICON_COOKIE_NAME,
+  APPLICATION_NAME,
+  buildApplicationTitle,
   normalizeCompanyAssetPath,
 } from "@/lib/auth/company-assets"
 import { cn } from "@/lib/utils"
@@ -26,13 +29,14 @@ const geistMono = Geist_Mono({
 
 export async function generateMetadata(): Promise<Metadata> {
   const cookieStore = await cookies()
+  const activeCompanyName = cookieStore.get(ACTIVE_COMPANY_NAME_COOKIE_NAME)?.value
   const faviconPath = normalizeCompanyAssetPath(
     cookieStore.get(ACTIVE_COMPANY_FAVICON_COOKIE_NAME)?.value
   )
 
   return {
-    title: "Floripa Intranet",
-    description: "Login e area interna da Floripa Intranet",
+    title: buildApplicationTitle(activeCompanyName),
+    description: `Login e area interna do ${APPLICATION_NAME}`,
     icons: {
       icon: faviconPath,
       shortcut: faviconPath,

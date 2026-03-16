@@ -2,7 +2,7 @@
 
 import { useEffect } from "react"
 
-import { normalizeCompanyAssetPath } from "@/lib/auth/company-assets"
+import { buildApplicationTitle, normalizeCompanyAssetPath } from "@/lib/auth/company-assets"
 import { useAuthStore } from "@/lib/auth/store"
 
 function resolveIconType(path: string) {
@@ -61,6 +61,10 @@ export function CompanyFaviconSync() {
     upsertFaviconLink("icon", faviconPath)
     upsertFaviconLink("shortcut icon", faviconPath)
   }, [faviconPath])
+
+  useEffect(() => {
+    document.title = buildApplicationTitle(activeCompany?.name)
+  }, [activeCompany?.name])
 
   return null
 }

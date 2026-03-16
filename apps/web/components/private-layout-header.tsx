@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
+import { useAuthStore } from "@/lib/auth/store"
 
 const labels: Record<string, string> = {
   dashboard: "Painel",
@@ -28,6 +29,9 @@ const labels: Record<string, string> = {
 
 export function PrivateLayoutHeader() {
   const pathname = usePathname()
+  const activeCompany = useAuthStore((state) =>
+    state.companies.find((company) => company.id === state.activeCompanyId) ?? null
+  )
   const segments = pathname.split("/").filter(Boolean)
   const current = segments.at(-1) ?? "dashboard"
   const previous = segments.at(-2)
@@ -96,7 +100,7 @@ export function PrivateLayoutHeader() {
           <BreadcrumbList>
             <BreadcrumbItem className="hidden md:block">
               <BreadcrumbLink asChild>
-                <Link href="/dashboard">Floripa Intranet</Link>
+                <Link href="/dashboard">{activeCompany?.name ?? "Irrivio"}</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator className="hidden md:block" />

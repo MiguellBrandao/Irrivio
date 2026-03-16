@@ -1,7 +1,7 @@
 {
   "info": {
     "_postman_id": "4e32d733-d935-4a7d-85ee-407d4fcb78f4",
-    "name": "Floripa Intranet API",
+    "name": "Irrivio API",
     "description": "Collection aligned with the current company-scoped API contract.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },

@@ -55,7 +55,7 @@ export async function downloadQuotePdf({
     title: buildQuoteDocumentTitle(quote),
     subject: `Orcamento ${company.name}`,
     author: company.name,
-    creator: "Floripa Intranet",
+    creator: "Irrivio",
   })
 
   doc.addImage(

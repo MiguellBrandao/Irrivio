@@ -1,6 +1,6 @@
 # Company Multitenancy
 
-This document explains the current company-scoped model used by the Floripa Intranet API and web app.
+This document explains the current company-scoped model used by the Irrivio API and web app.
 
 ## Goal
 

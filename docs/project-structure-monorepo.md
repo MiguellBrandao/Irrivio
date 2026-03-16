@@ -5,7 +5,7 @@ This repository uses `pnpm` workspaces plus `turbo`.
 ## Root
 
 ```txt
-Floripa Intranet/
+Irrivio/
 |- apps/
 |  |- api/
 |  `- web/

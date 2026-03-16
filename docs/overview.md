@@ -1,6 +1,6 @@
-# Floripa Intranet Overview
+# Irrivio Overview
 
-Floripa Intranet is a monorepo for a garden-services intranet with a NestJS API and a Next.js web app.
+Irrivio is a monorepo for a garden-services intranet with a NestJS API and a Next.js web app.
 
 ## Company model
 
