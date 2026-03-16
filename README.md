@@ -311,4 +311,5 @@ Detailed documentation lives in [`docs`](docs):
 - [`database-schema.md`](docs/database-schema.md)
 - [`api-endpoints.md`](docs/api-endpoints.md)
 - [`company-multitenancy.md`](docs/company-multitenancy.md)
+- [`easypanel-deployment.md`](docs/easypanel-deployment.md)
 - [`Irrivio.postman_collection.json`](docs/Irrivio.postman_collection.json)

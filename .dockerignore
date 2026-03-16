@@ -1,0 +1,12 @@
+.git
+.gitignore
+.pnpm-store
+.turbo
+.workspace-ready
+node_modules
+**/node_modules
+**/.next
+**/dist
+**/.turbo
+coverage
+.out
