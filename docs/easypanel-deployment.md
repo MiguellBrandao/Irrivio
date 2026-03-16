@@ -97,6 +97,6 @@ pnpm db:migrate
 
 The Dockerfiles already define the production commands:
 
-- API: `node dist/main`
+- API: `node dist/src/main.js`
 - Web: `node apps/web/server.js`
 - Migrations: `pnpm db:migrate`

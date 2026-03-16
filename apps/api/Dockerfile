@@ -45,4 +45,4 @@ EXPOSE 3000
 
 WORKDIR /app/apps/api
 
-CMD ["node", "dist/main"]
+CMD ["node", "dist/src/main.js"]
