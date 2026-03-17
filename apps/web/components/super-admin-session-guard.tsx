@@ -16,6 +16,7 @@ export function SuperAdminSessionGuard({
   const accessToken = useAuthStore((state) => state.accessToken)
   const user = useAuthStore((state) => state.user)
   const [checked, setChecked] = useState(false)
+  const isAuthorized = Boolean(accessToken && user?.is_super_admin)
 
   useEffect(() => {
     let active = true
@@ -61,7 +62,7 @@ export function SuperAdminSessionGuard({
     }
   }, [accessToken, router, user])
 
-  if (!checked && !(accessToken && user?.is_super_admin)) {
+  if (!checked || !isAuthorized) {
     return <SessionLoadingScreen />
   }
 
