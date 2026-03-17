@@ -18,6 +18,7 @@ export function LoginRouteGuard({
   const accessToken = useAuthStore((state) => state.accessToken)
   const user = useAuthStore((state) => state.user)
   const [checked, setChecked] = useState(false)
+  const isAuthenticated = Boolean(accessToken && user)
 
   useEffect(() => {
     let active = true
@@ -54,7 +55,7 @@ export function LoginRouteGuard({
     }
   }, [accessToken, router, user])
 
-  if (!checked && !(accessToken || user)) {
+  if (!checked || isAuthenticated) {
     return <SessionLoadingScreen compact />
   }
 

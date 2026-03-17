@@ -3,8 +3,10 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
+import { useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 
+import { SessionLoadingScreen } from "@/components/session-loading-screen"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -32,6 +34,7 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
   const router = useRouter()
   const setSession = useAuthStore((state) => state.setSession)
+  const [isRedirecting, setIsRedirecting] = useState(false)
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
@@ -44,14 +47,26 @@ export function LoginForm({
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: (session) => {
+      setIsRedirecting(true)
       setSession(session)
-      form.reset({ email: session.user.email, password: "" })
-      router.push(getAuthenticatedHomePath(session.user))
+      router.replace(getAuthenticatedHomePath(session.user))
     },
   })
 
   function onSubmit(values: LoginFormValues) {
     loginMutation.mutate(values)
+  }
+
+  if (isRedirecting) {
+    return (
+      <div className={cn("flex flex-col gap-6", className)} {...props}>
+        <Card className="border-white/70 bg-white/80 shadow-[0_30px_80px_-40px_rgba(31,47,39,0.55)] backdrop-blur">
+          <CardContent className="py-10">
+            <SessionLoadingScreen compact />
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (
@@ -119,10 +134,10 @@ export function LoginForm({
             type="submit"
             form="login-form"
             size="lg"
-            disabled={loginMutation.isPending}
+            disabled={loginMutation.isPending || isRedirecting}
             className="w-full bg-[#215442] text-white hover:bg-[#183b2f]"
           >
-            {loginMutation.isPending ? "A entrar..." : "Entrar"}
+            {loginMutation.isPending || isRedirecting ? "A entrar..." : "Entrar"}
           </Button>
         </CardFooter>
       </Card>
