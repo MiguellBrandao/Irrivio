@@ -537,7 +537,9 @@ function roundRect(
 }
 
 async function loadImage(path: string) {
-  const resolvedUrl = new URL(path, window.location.origin).toString()
+  const resolvedUrl = path.startsWith("data:image/")
+    ? path
+    : new URL(path, window.location.origin).toString()
 
   return new Promise<HTMLImageElement>((resolve, reject) => {
     const image = new Image()

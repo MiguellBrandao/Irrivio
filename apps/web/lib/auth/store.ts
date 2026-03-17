@@ -7,6 +7,7 @@ import {
   ACTIVE_COMPANY_ID_COOKIE_NAME,
   ACTIVE_COMPANY_NAME_COOKIE_NAME,
   normalizeCompanyAssetPath,
+  shouldPersistCompanyAssetInCookie,
 } from "@/lib/auth/company-assets"
 import type { AuthCompany, AuthUser } from "@/lib/auth/types"
 
@@ -70,10 +71,16 @@ function syncActiveCompanyCookies(companies: AuthCompany[], activeCompanyId: str
 
   writeCookie(ACTIVE_COMPANY_ID_COOKIE_NAME, activeCompany.id)
   writeCookie(ACTIVE_COMPANY_NAME_COOKIE_NAME, activeCompany.name)
-  writeCookie(
-    ACTIVE_COMPANY_FAVICON_COOKIE_NAME,
-    normalizeCompanyAssetPath(activeCompany.favicon_path)
-  )
+
+  if (shouldPersistCompanyAssetInCookie(activeCompany.favicon_path)) {
+    writeCookie(
+      ACTIVE_COMPANY_FAVICON_COOKIE_NAME,
+      normalizeCompanyAssetPath(activeCompany.favicon_path)
+    )
+    return
+  }
+
+  deleteCookie(ACTIVE_COMPANY_FAVICON_COOKIE_NAME)
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({

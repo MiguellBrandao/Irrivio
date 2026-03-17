@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { Add01Icon, PencilEdit02Icon } from "@hugeicons/core-free-icons"
+import { Add01Icon, PencilEdit02Icon, ViewIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useMemo, useState } from "react"
 import { toast } from "sonner"
@@ -189,8 +189,11 @@ export function PlatformCompaniesListPage() {
                   </div>
                 </dl>
                 <div className="mt-4 flex flex-wrap justify-end gap-2">
-                  <Button asChild variant="outline" size="sm">
-                    <Link href={`/platform/companies/${company.id}`}>Detalhe</Link>
+                  <Button asChild variant="outline" size="icon-sm">
+                    <Link href={`/platform/companies/${company.id}`}>
+                      <HugeiconsIcon icon={ViewIcon} strokeWidth={2} />
+                      <span className="sr-only">Ver empresa</span>
+                    </Link>
                   </Button>
                   <Button asChild variant="outline" size="icon-sm">
                     <Link href={`/platform/companies/${company.id}/edit`}>
@@ -251,8 +254,11 @@ export function PlatformCompaniesListPage() {
                     <TableCell>{formatPlatformDate(company.created_at)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <Button asChild variant="outline" size="sm">
-                          <Link href={`/platform/companies/${company.id}`}>Detalhe</Link>
+                        <Button asChild variant="outline" size="icon-sm">
+                          <Link href={`/platform/companies/${company.id}`}>
+                            <HugeiconsIcon icon={ViewIcon} strokeWidth={2} />
+                            <span className="sr-only">Ver empresa</span>
+                          </Link>
                         </Button>
                         <Button asChild variant="outline" size="icon-sm">
                           <Link href={`/platform/companies/${company.id}/edit`}>

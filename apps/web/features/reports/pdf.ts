@@ -1281,6 +1281,10 @@ async function loadImageAsDataUrl(path: string | null | undefined) {
     return null
   }
 
+  if (path.startsWith("data:image/")) {
+    return path
+  }
+
   try {
     const response = await fetch(new URL(path, window.location.origin))
     if (!response.ok) {

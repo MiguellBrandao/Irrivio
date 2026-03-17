@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { Add01Icon, PencilEdit02Icon } from "@hugeicons/core-free-icons"
+import { Add01Icon, PencilEdit02Icon, ViewIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useMemo, useState } from "react"
 import { toast } from "sonner"
@@ -178,8 +178,11 @@ export function PlatformUsersListPage() {
                     <TableCell>{formatPlatformDate(user.created_at)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <Button asChild variant="outline" size="sm">
-                          <Link href={`/platform/users/${user.id}`}>Detalhe</Link>
+                        <Button asChild variant="outline" size="icon-sm">
+                          <Link href={`/platform/users/${user.id}`}>
+                            <HugeiconsIcon icon={ViewIcon} strokeWidth={2} />
+                            <span className="sr-only">Ver utilizador</span>
+                          </Link>
                         </Button>
                         <Button asChild variant="outline" size="icon-sm">
                           <Link href={`/platform/users/${user.id}/edit`}>
@@ -235,8 +238,11 @@ export function PlatformUsersListPage() {
                   </div>
                 </dl>
                 <div className="mt-4 flex justify-end gap-2">
-                  <Button asChild variant="outline" size="sm">
-                    <Link href={`/platform/users/${user.id}`}>Detalhe</Link>
+                  <Button asChild variant="outline" size="icon-sm">
+                    <Link href={`/platform/users/${user.id}`}>
+                      <HugeiconsIcon icon={ViewIcon} strokeWidth={2} />
+                      <span className="sr-only">Ver utilizador</span>
+                    </Link>
                   </Button>
                   <Button asChild variant="outline" size="icon-sm">
                     <Link href={`/platform/users/${user.id}/edit`}>

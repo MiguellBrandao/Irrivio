@@ -2,7 +2,10 @@
 
 import Link from "next/link"
 import { useQuery } from "@tanstack/react-query"
+import { PencilEdit02Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 
+import { PlatformCompanyMembersPage } from "@/features/platform/platform-company-members-page"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -62,34 +65,24 @@ export function PlatformCompanyDetailPage({
 
   return (
     <div className="space-y-6">
-      <Card className="border-[#dfd7c0] bg-white">
-        <CardHeader className="gap-4">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-            <div className="space-y-2">
-              <CardTitle>{company.name}</CardTitle>
-              <CardDescription>
-                {company.slug} · {company.email}
-              </CardDescription>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Button asChild variant="outline">
-                <Link href={`/platform/companies/${company.id}/edit`}>Editar empresa</Link>
-              </Button>
-              <Button asChild className="bg-[#215442] text-white hover:bg-[#183b2f]">
-                <Link href={`/platform/companies/${company.id}/members`}>Gerir membros</Link>
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="grid gap-4 md:grid-cols-3">
-          <SummaryCard label="Membros" value={String(company.member_count)} />
-          <SummaryCard
-            label="Admins ativos"
-            value={String(company.active_admin_count)}
-          />
-          <SummaryCard label="NIF" value={company.nif} />
-        </CardContent>
-      </Card>
+      <section className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div className="space-y-2">
+          <h1 className="text-2xl font-semibold tracking-tight text-[#1f2f27]">
+            {company.name}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            {company.slug} - {company.email}
+          </p>
+        </div>
+        <div className="flex justify-start lg:justify-end">
+          <Button asChild variant="outline" size="icon-sm">
+            <Link href={`/platform/companies/${company.id}/edit`}>
+              <HugeiconsIcon icon={PencilEdit02Icon} strokeWidth={2} />
+              <span className="sr-only">Editar empresa</span>
+            </Link>
+          </Button>
+        </div>
+      </section>
 
       <Card className="border-[#dfd7c0] bg-[#fbf8ef]">
         <CardHeader>
@@ -100,25 +93,18 @@ export function PlatformCompanyDetailPage({
           <DetailItem label="Telemovel" value={company.mobile_phone} />
           <DetailItem label="Email" value={company.email} />
           <DetailItem label="IBAN" value={company.iban} />
-          <DetailItem label="Logo path" value={company.logo_path ?? "-"} />
-          <DetailItem label="Favicon path" value={company.favicon_path ?? "-"} />
+          <DetailItem label="NIF" value={company.nif} />
+          <DetailItem label="Slug" value={company.slug} />
+          <AssetPreview label="Logo" value={company.logo_path} />
+          <AssetPreview label="Favicon" value={company.favicon_path} />
         </CardContent>
       </Card>
-    </div>
-  )
-}
 
-function SummaryCard({
-  label,
-  value,
-}: {
-  label: string
-  value: string
-}) {
-  return (
-    <div className="rounded-2xl border border-[#dfd7c0] bg-[#fbf8ef] p-4">
-      <div className="text-sm text-muted-foreground">{label}</div>
-      <div className="mt-2 text-2xl font-semibold text-[#1f2f27]">{value}</div>
+      <PlatformCompanyMembersPage
+        companyId={company.id}
+        companyName={company.name}
+        embedded
+      />
     </div>
   )
 }
@@ -134,6 +120,33 @@ function DetailItem({
     <div className="space-y-1 rounded-2xl border border-[#dfd7c0] bg-white p-4">
       <div className="text-sm text-muted-foreground">{label}</div>
       <div className="text-sm font-medium text-[#1f2f27]">{value}</div>
+    </div>
+  )
+}
+
+function AssetPreview({
+  label,
+  value,
+}: {
+  label: string
+  value: string | null
+}) {
+  return (
+    <div className="space-y-3 rounded-2xl border border-[#dfd7c0] bg-white p-4">
+      <div className="text-sm text-muted-foreground">{label}</div>
+      {value ? (
+        <div className="flex min-h-28 items-center justify-center overflow-hidden rounded-2xl border border-dashed border-[#dfd7c0] bg-[#fbf8ef] p-4">
+          <img
+            src={value}
+            alt={label}
+            className="max-h-20 max-w-full object-contain"
+          />
+        </div>
+      ) : (
+        <div className="rounded-2xl border border-dashed border-[#dfd7c0] bg-[#fbf8ef] px-4 py-6 text-sm text-muted-foreground">
+          Sem imagem configurada.
+        </div>
+      )}
     </div>
   )
 }

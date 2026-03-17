@@ -1,4 +1,4 @@
-import { PlatformCompanyMembersPage } from "@/features/platform/platform-company-members-page"
+import { redirect } from "next/navigation"
 
 export default async function PlatformCompanyMembersRoute({
   params,
@@ -7,5 +7,5 @@ export default async function PlatformCompanyMembersRoute({
 }) {
   const { id } = await params
 
-  return <PlatformCompanyMembersPage companyId={id} />
+  redirect(`/platform/companies/${id}`)
 }

@@ -143,7 +143,9 @@ export class PlatformService {
         throw new BadRequestException('Failed to create company');
       }
 
-      const userId = await this.resolveMembershipUserId(tx, initialAdminSource);
+      const userId = await this.resolveMembershipUserId(tx, initialAdminSource, {
+        allowSuperAdmin: false,
+      });
 
       await tx.insert(companyMemberships).values({
         companyId,
@@ -962,16 +964,26 @@ export class PlatformService {
   private async resolveMembershipUserId(
     executor: PlatformTx,
     source: ExistingUserSource | NewUserSource,
+    options?: { allowSuperAdmin?: boolean },
   ) {
     if (source.mode === 'existing') {
       const existingUser = await executor
-        .select({ id: users.id })
+        .select({ id: users.id, is_super_admin: users.isSuperAdmin })
         .from(users)
         .where(eq(users.id, source.userId))
         .limit(1);
 
       if (!existingUser[0]) {
         throw new NotFoundException('User not found');
+      }
+
+      if (
+        options?.allowSuperAdmin === false &&
+        existingUser[0].is_super_admin
+      ) {
+        throw new BadRequestException(
+          'A super admin account cannot be used as the initial company admin',
+        );
       }
 
       return existingUser[0].id;

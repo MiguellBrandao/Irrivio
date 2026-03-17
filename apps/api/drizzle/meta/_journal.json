@@ -120,6 +120,13 @@
       "when": 1773702000000,
       "tag": "0018_super_admin_platform",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1773792000000,
+      "tag": "0019_company_assets_base64",
+      "breakpoints": true
     }
   ]
 }

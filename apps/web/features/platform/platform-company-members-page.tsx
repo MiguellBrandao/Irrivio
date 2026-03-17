@@ -1,14 +1,13 @@
 "use client"
 
+import Link from "next/link"
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Add01Icon, PencilEdit02Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import Link from "next/link"
 import { useMemo, useState } from "react"
 import { toast } from "sonner"
 
 import { DeleteConfirmDialog } from "@/components/delete-confirm-dialog"
-import { PlatformMembershipFormDialog } from "@/features/platform/platform-membership-form-dialog"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -18,6 +17,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { PlatformMembershipFormDialog } from "@/features/platform/platform-membership-form-dialog"
 import {
   Select,
   SelectContent,
@@ -48,8 +48,12 @@ const PAGE_SIZE_OPTIONS = [5, 10, 20]
 
 export function PlatformCompanyMembersPage({
   companyId,
+  companyName,
+  embedded = false,
 }: {
   companyId: string
+  companyName?: string
+  embedded?: boolean
 }) {
   const queryClient = useQueryClient()
   const accessToken = useAuthStore((state) => state.accessToken)
@@ -63,7 +67,7 @@ export function PlatformCompanyMembersPage({
   const companyQuery = useQuery({
     queryKey: ["platform", "companies", "detail", companyId, accessToken],
     queryFn: () => getPlatformCompanyById(accessToken ?? "", companyId),
-    enabled: Boolean(accessToken && companyId),
+    enabled: Boolean(accessToken && companyId && !companyName),
   })
 
   const membershipsQuery = useQuery({
@@ -161,7 +165,8 @@ export function PlatformCompanyMembersPage({
           <div className="space-y-2">
             <CardTitle>Membros da empresa</CardTitle>
             <CardDescription>
-              {companyQuery.data?.name ?? "Empresa"} · garante sempre pelo menos um admin ativo.
+              {companyName ?? companyQuery.data?.name ?? "Empresa"} - garante sempre
+              pelo menos um admin ativo.
             </CardDescription>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
@@ -203,14 +208,16 @@ export function PlatformCompanyMembersPage({
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex flex-wrap gap-2">
-          <Button asChild variant="outline" size="sm">
-            <Link href={`/platform/companies/${companyId}`}>Voltar ao detalhe</Link>
-          </Button>
-          <Button asChild variant="outline" size="sm">
-            <Link href={`/platform/companies/${companyId}/edit`}>Editar empresa</Link>
-          </Button>
-        </div>
+        {!embedded ? (
+          <div className="flex flex-wrap gap-2">
+            <Button asChild variant="outline" size="sm">
+              <Link href={`/platform/companies/${companyId}`}>Voltar ao detalhe</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href={`/platform/companies/${companyId}/edit`}>Editar empresa</Link>
+            </Button>
+          </div>
+        ) : null}
 
         <div className="hidden overflow-hidden rounded-2xl border border-[#dfd7c0] bg-white md:block">
           <Table>

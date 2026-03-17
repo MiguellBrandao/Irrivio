@@ -38,11 +38,11 @@ export function PlatformSidebar({
   return (
     <Sidebar variant="inset" collapsible="icon" {...props}>
       <SidebarHeader>
-        <div className="rounded-2xl bg-[#215442] px-4 py-4 text-white shadow-sm">
-          <div className="text-xs uppercase tracking-[0.24em] text-white/70">
+        <div className="px-2 py-2">
+          <div className="text-xs uppercase tracking-[0.24em] text-[#215442]/70">
             Floripa
           </div>
-          <div className="mt-1 text-lg font-semibold">Platform</div>
+          <div className="mt-1 text-lg font-semibold text-[#1f2f27]">Platform</div>
         </div>
       </SidebarHeader>
       <SidebarContent>

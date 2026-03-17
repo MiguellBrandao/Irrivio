@@ -18,12 +18,10 @@ export class CreatePlatformCompanyDto {
 
   @IsOptional()
   @IsString()
-  @MaxLength(255)
   logo_path?: string;
 
   @IsOptional()
   @IsString()
-  @MaxLength(255)
   favicon_path?: string;
 
   @IsString()

@@ -2,6 +2,8 @@
 
 import Link from "next/link"
 import { useQuery } from "@tanstack/react-query"
+import { PencilEdit02Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -72,47 +74,46 @@ export function PlatformUserDetailPage({
 
   return (
     <div className="space-y-6">
-      <Card className="border-[#dfd7c0] bg-white">
-        <CardHeader className="gap-4">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-            <div className="space-y-2">
-              <CardTitle>{user.email}</CardTitle>
-              <CardDescription>
-                Conta global da plataforma criada em {formatPlatformDate(user.created_at)}.
-              </CardDescription>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Badge variant={user.is_super_admin ? "default" : "secondary"}>
-                {user.is_super_admin ? "Super Admin" : "User"}
-              </Badge>
-              <Button asChild variant="outline">
-                <Link href={`/platform/users/${user.id}/edit`}>Editar utilizador</Link>
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="grid gap-4 md:grid-cols-2">
-          <div className="rounded-2xl border border-[#dfd7c0] bg-[#fbf8ef] p-4">
-            <div className="text-sm text-muted-foreground">Memberships</div>
-            <div className="mt-2 text-2xl font-semibold text-[#1f2f27]">
-              {user.membership_count}
-            </div>
-          </div>
-          <div className="rounded-2xl border border-[#dfd7c0] bg-[#fbf8ef] p-4">
-            <div className="text-sm text-muted-foreground">Permissao global</div>
-            <div className="mt-2 text-2xl font-semibold text-[#1f2f27]">
+      <section className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div className="space-y-2">
+          <div className="flex flex-wrap items-center gap-3">
+            <Badge
+              variant={user.is_super_admin ? "default" : "secondary"}
+              className="shrink-0"
+            >
               {user.is_super_admin ? "Super Admin" : "User"}
-            </div>
+            </Badge>
+            <h1 className="text-2xl font-semibold tracking-tight text-[#1f2f27]">
+              {user.email}
+            </h1>
           </div>
-        </CardContent>
-      </Card>
+          <p className="text-sm text-muted-foreground">
+            Conta global da plataforma criada em {formatPlatformDate(user.created_at)}.
+          </p>
+        </div>
+        <div className="flex justify-start lg:justify-end">
+          <Button asChild variant="outline" size="icon-sm">
+            <Link href={`/platform/users/${user.id}/edit`}>
+              <HugeiconsIcon icon={PencilEdit02Icon} strokeWidth={2} />
+              <span className="sr-only">Editar utilizador</span>
+            </Link>
+          </Button>
+        </div>
+      </section>
 
       <Card className="border-[#dfd7c0] bg-[#fbf8ef]">
         <CardHeader>
-          <CardTitle>Memberships</CardTitle>
-          <CardDescription>
-            Empresas onde esta conta tem acesso e o respetivo role.
-          </CardDescription>
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <CardTitle>Memberships</CardTitle>
+              <CardDescription>
+                Empresas onde esta conta tem acesso e o respetivo role.
+              </CardDescription>
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {user.membership_count} acesso(s)
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="overflow-hidden rounded-2xl border border-[#dfd7c0] bg-white">
@@ -140,7 +141,7 @@ export function PlatformUserDetailPage({
                       <TableCell>{formatPlatformDate(membership.created_at)}</TableCell>
                       <TableCell className="text-right">
                         <Button asChild variant="outline" size="sm">
-                          <Link href={`/platform/companies/${membership.company_id}/members`}>
+                          <Link href={`/platform/companies/${membership.company_id}`}>
                             Abrir empresa
                           </Link>
                         </Button>

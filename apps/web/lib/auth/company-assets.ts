@@ -17,10 +17,26 @@ export function normalizeCompanyAssetPath(path: string | null | undefined) {
     return DEFAULT_COMPANY_FAVICON_PATH
   }
 
+  if (path.startsWith("data:image/")) {
+    return path
+  }
+
   try {
     const decodedPath = decodeURIComponent(path)
+    if (decodedPath.startsWith("data:image/")) {
+      return decodedPath
+    }
+
     return decodedPath.startsWith("/") ? decodedPath : DEFAULT_COMPANY_FAVICON_PATH
   } catch {
     return path.startsWith("/") ? path : DEFAULT_COMPANY_FAVICON_PATH
   }
+}
+
+export function shouldPersistCompanyAssetInCookie(path: string | null | undefined) {
+  if (!path) {
+    return false
+  }
+
+  return !path.startsWith("data:image/")
 }

@@ -4,7 +4,7 @@ import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 import { Controller, useForm, useWatch } from "react-hook-form"
 import { toast } from "sonner"
 
@@ -16,7 +16,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import {
   Select,
@@ -110,6 +116,18 @@ export function PlatformCompanyFormPage({
     control: form.control,
     name: "initial_admin_mode",
   })
+  const initialAdminUserId = useWatch({
+    control: form.control,
+    name: "initial_admin_user_id",
+  })
+  const logoPath = useWatch({
+    control: form.control,
+    name: "logo_path",
+  })
+  const faviconPath = useWatch({
+    control: form.control,
+    name: "favicon_path",
+  })
 
   const companyQuery = useQuery({
     queryKey: ["platform", "companies", "detail", companyId, accessToken],
@@ -123,11 +141,31 @@ export function PlatformCompanyFormPage({
     enabled: Boolean(accessToken && mode === "create"),
   })
 
+  const existingAdminUsers = useMemo(
+    () => (usersQuery.data ?? []).filter((user) => !user.is_super_admin),
+    [usersQuery.data]
+  )
+
   useEffect(() => {
     if (mode === "edit" && companyQuery.data) {
       form.reset(toPlatformCompanyFormValues(companyQuery.data))
     }
   }, [companyQuery.data, form, mode])
+
+  useEffect(() => {
+    if (mode !== "create" || initialAdminMode !== "existing" || !initialAdminUserId) {
+      return
+    }
+
+    const userStillAvailable = existingAdminUsers.some((user) => user.id === initialAdminUserId)
+
+    if (!userStillAvailable) {
+      form.setValue("initial_admin_user_id", "", {
+        shouldDirty: true,
+        shouldValidate: true,
+      })
+    }
+  }, [existingAdminUsers, form, initialAdminMode, initialAdminUserId, mode])
 
   const saveMutation = useMutation({
     mutationFn: async (values: PlatformCompanyFormValues) => {
@@ -159,6 +197,26 @@ export function PlatformCompanyFormPage({
       toast.error(error.message || "Nao foi possivel guardar a empresa.")
     },
   })
+
+  async function handleAssetSelection(
+    fieldName: "logo_path" | "favicon_path",
+    files: FileList | null
+  ) {
+    const file = files?.[0]
+    if (!file) {
+      return
+    }
+
+    try {
+      const value = await readFileAsDataUrl(file)
+      form.setValue(fieldName, value, {
+        shouldDirty: true,
+        shouldValidate: true,
+      })
+    } catch {
+      toast.error("Nao foi possivel ler a imagem selecionada.")
+    }
+  }
 
   function onSubmit(values: PlatformCompanyFormValues) {
     saveMutation.mutate(values)
@@ -215,18 +273,40 @@ export function PlatformCompanyFormPage({
                   />
                   <CompanyField control={form.control} name="nif" label="NIF" />
                   <CompanyField control={form.control} name="iban" label="IBAN" />
-                  <CompanyField
-                    control={form.control}
-                    name="logo_path"
-                    label="Logo path"
+                </div>
+
+                <div className="mt-5 grid gap-5 md:grid-cols-2">
+                  <CompanyAssetField
+                    id="company-logo"
+                    label="Logo"
+                    value={logoPath}
+                    error={form.formState.errors.logo_path}
+                    onClear={() => {
+                      form.setValue("logo_path", "", {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      })
+                    }}
+                    onFileChange={(files) => handleAssetSelection("logo_path", files)}
                   />
-                  <CompanyField
-                    control={form.control}
-                    name="favicon_path"
-                    label="Favicon path"
+                  <CompanyAssetField
+                    id="company-favicon"
+                    label="Favicon"
+                    value={faviconPath}
+                    error={form.formState.errors.favicon_path}
+                    onClear={() => {
+                      form.setValue("favicon_path", "", {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      })
+                    }}
+                    onFileChange={(files) => handleAssetSelection("favicon_path", files)}
                   />
                 </div>
-                <CompanyField control={form.control} name="address" label="Morada" />
+
+                <div className="mt-5">
+                  <CompanyField control={form.control} name="address" label="Morada" />
+                </div>
               </div>
 
               {mode === "create" ? (
@@ -265,11 +345,6 @@ export function PlatformCompanyFormPage({
                       name="initial_admin_name"
                       label="Nome na empresa"
                     />
-                    <CompanyField
-                      control={form.control}
-                      name="initial_admin_phone"
-                      label="Telefone"
-                    />
                   </div>
 
                   {initialAdminMode === "existing" ? (
@@ -284,8 +359,8 @@ export function PlatformCompanyFormPage({
                               <SelectValue placeholder="Seleciona um utilizador" />
                             </SelectTrigger>
                             <SelectContent>
-                              {(usersQuery.data ?? []).length ? (
-                                (usersQuery.data ?? []).map((user) => (
+                              {existingAdminUsers.length ? (
+                                existingAdminUsers.map((user) => (
                                   <SelectItem key={user.id} value={user.id}>
                                     {user.email}
                                   </SelectItem>
@@ -317,6 +392,12 @@ export function PlatformCompanyFormPage({
                       />
                     </div>
                   )}
+
+                  <CompanyField
+                    control={form.control}
+                    name="initial_admin_phone"
+                    label="Telefone"
+                  />
                 </div>
               ) : null}
 
@@ -387,4 +468,68 @@ function CompanyField({
       )}
     />
   )
+}
+
+function CompanyAssetField({
+  id,
+  label,
+  value,
+  error,
+  onFileChange,
+  onClear,
+}: {
+  id: string
+  label: string
+  value: string
+  error?: { message?: string }
+  onFileChange: (files: FileList | null) => void
+  onClear: () => void
+}) {
+  return (
+    <Field data-invalid={Boolean(error)}>
+      <FieldLabel htmlFor={id}>{label}</FieldLabel>
+      <Input
+        id={id}
+        type="file"
+        accept="image/*"
+        onChange={(event) => {
+          onFileChange(event.target.files)
+          event.currentTarget.value = ""
+        }}
+        aria-invalid={Boolean(error)}
+      />
+      <FieldDescription>
+        A imagem fica guardada diretamente na base de dados em base64.
+      </FieldDescription>
+      {value ? (
+        <div className="space-y-3 rounded-2xl border border-[#dfd7c0] bg-[#fbf8ef] p-4">
+          <div className="flex min-h-28 items-center justify-center overflow-hidden rounded-2xl border border-dashed border-[#dfd7c0] bg-white p-4">
+            <img
+              src={value}
+              alt={label}
+              className="max-h-20 max-w-full object-contain"
+            />
+          </div>
+          <Button type="button" variant="outline" size="sm" onClick={onClear}>
+            Remover imagem
+          </Button>
+        </div>
+      ) : (
+        <div className="rounded-2xl border border-dashed border-[#dfd7c0] bg-[#fbf8ef] px-4 py-6 text-sm text-muted-foreground">
+          Nenhuma imagem selecionada.
+        </div>
+      )}
+      <FieldError errors={[error]} />
+    </Field>
+  )
+}
+
+function readFileAsDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+
+    reader.onload = () => resolve(String(reader.result))
+    reader.onerror = () => reject(new Error("Nao foi possivel ler o ficheiro."))
+    reader.readAsDataURL(file)
+  })
 }

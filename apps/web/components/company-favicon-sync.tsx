@@ -6,6 +6,18 @@ import { buildApplicationTitle, normalizeCompanyAssetPath } from "@/lib/auth/com
 import { useAuthStore } from "@/lib/auth/store"
 
 function resolveIconType(path: string) {
+  if (path.startsWith("data:image/png")) {
+    return "image/png"
+  }
+
+  if (path.startsWith("data:image/svg+xml")) {
+    return "image/svg+xml"
+  }
+
+  if (path.startsWith("data:image/x-icon") || path.startsWith("data:image/vnd.microsoft.icon")) {
+    return "image/x-icon"
+  }
+
   if (path.endsWith(".png")) {
     return "image/png"
   }
