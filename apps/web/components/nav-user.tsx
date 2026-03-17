@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 
 import {
   Avatar,
@@ -24,6 +25,7 @@ import {
 } from "@/components/ui/sidebar"
 import { ProfileDialog } from "@/components/profile-dialog"
 import { logout } from "@/lib/auth/api"
+import { markLogoutRedirect } from "@/lib/auth/logout"
 import { useAuthStore } from "@/lib/auth/store"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
@@ -41,6 +43,7 @@ export function NavUser({
     avatar: string
   }
 }) {
+  const router = useRouter()
   const { isMobile } = useSidebar()
   const accessToken = useAuthStore((state) => state.accessToken)
   const clearSession = useAuthStore((state) => state.clearSession)
@@ -55,12 +58,15 @@ export function NavUser({
       .toUpperCase() || "FI"
 
   async function handleLogout() {
+    markLogoutRedirect()
+
     try {
       await logout(accessToken)
     } catch {
       // Always clear local session even if the logout request fails.
     } finally {
       clearSession()
+      router.replace("/auth/login")
     }
   }
 
